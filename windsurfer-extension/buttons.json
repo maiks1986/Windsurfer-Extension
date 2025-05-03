@@ -1,0 +1,20 @@
+[
+  {
+    "id": "button_1651234567890",
+    "label": "Hello",
+    "message": "Hello, how can I help you today?",
+    "color": "#007acc"
+  },
+  {
+    "id": "button_1651234567891",
+    "label": "Thanks",
+    "message": "Thank you for the information!",
+    "color": "#4CAF50"
+  },
+  {
+    "id": "button_1651234567892",
+    "label": "Explain",
+    "message": "Could you please explain this in more detail?",
+    "color": "#ff9800"
+  }
+]

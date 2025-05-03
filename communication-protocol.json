@@ -1,0 +1,360 @@
+{
+  "version": "1.0.0",
+  "description": "Communication protocol between Windsurfer VSCode Extension and StreamDeck Plugin",
+  "connection": {
+    "options": [
+      {
+        "type": "websocket",
+        "description": "WebSocket connection",
+        "configuration": {
+          "portRange": "8000-9000",
+          "defaultPort": 8765,
+          "reconnectInterval": 5000,
+          "discoveryEnabled": true
+        }
+      },
+      {
+        "type": "unixSocket",
+        "description": "Unix Domain Socket connection (macOS/Linux)",
+        "configuration": {
+          "socketPath": "/tmp/windsurfer-communication.sock",
+          "reconnectInterval": 5000
+        }
+      },
+      {
+        "type": "namedPipe",
+        "description": "Windows Named Pipe connection",
+        "configuration": {
+          "pipeName": "windsurfer-communication",
+          "reconnectInterval": 5000
+        }
+      }
+    ],
+    "discovery": {
+      "enabled": true,
+      "broadcastPort": 8766,
+      "interval": 10000,
+      "message": {
+        "type": "discovery",
+        "service": "windsurfer",
+        "role": "[vscode|streamdeck]",
+        "platform": "string - Operating system (windows, macos, linux)",
+        "preferredConnection": "string - Preferred connection type based on platform"
+      }
+    },
+    "platformDetection": {
+      "enabled": true,
+      "connectionMapping": {
+        "windows": "namedPipe",
+        "macos": "unixSocket",
+        "linux": "unixSocket",
+        "fallback": "websocket"
+      }
+    },
+    "broker": {
+      "enabled": true,
+      "role": "streamdeck",
+      "instanceTracking": {
+        "enabled": true,
+        "instanceTimeout": 60000
+      }
+    }
+  },
+  "messages": {
+    "fromStreamDeckToVSCode": [
+      {
+        "type": "listInstances",
+        "description": "Request a list of all connected VSCode instances",
+        "payload": {},
+        "example": {
+          "type": "listInstances"
+        }
+      },
+      {
+        "type": "selectInstance",
+        "description": "Select a VSCode instance as the default target",
+        "payload": {
+          "instanceId": "string - The instance ID to select as default target"
+        },
+        "example": {
+          "type": "selectInstance",
+          "instanceId": "vscode-1651234567890"
+        }
+      },
+      {
+        "type": "executeCommand",
+        "description": "Execute a VSCode command",
+        "payload": {
+          "command": "string - The command ID to execute",
+          "args": "array - Optional arguments for the command",
+          "target": "string - Optional instance ID to target (omit for default instance)",
+          "broadcast": "boolean - Optional flag to broadcast to all instances"
+        },
+        "example": {
+          "type": "executeCommand",
+          "command": "editor.action.commentLine",
+          "args": [],
+          "target": "vscode-1651234567890"
+        }
+      },
+      {
+        "type": "insertText",
+        "description": "Insert text at the cursor position",
+        "payload": {
+          "text": "string - The text to insert",
+          "target": "string - Optional instance ID to target (omit for default instance)",
+          "broadcast": "boolean - Optional flag to broadcast to all instances",
+          "inputMethod": "string - Optional override for the input method (cursor, windsurf, direct)"
+        },
+        "example": {
+          "type": "insertText",
+          "text": "Hello, how can I help you today?",
+          "target": "vscode-1651234567890",
+          "inputMethod": "direct"
+        }
+      },
+      {
+        "type": "getButtons",
+        "description": "Request the list of available buttons from the VSCode extension",
+        "payload": {
+          "category": "string - Optional category filter"
+        },
+        "example": {
+          "type": "getButtons",
+          "category": "quick-responses"
+        }
+      },
+      {
+        "type": "ping",
+        "description": "Check if the VSCode extension is available",
+        "payload": {
+          "id": "string - Optional identifier for the ping"
+        },
+        "example": {
+          "type": "ping",
+          "id": "connection-check-1"
+        }
+      },
+      {
+        "type": "customAction",
+        "description": "Execute a custom action defined by the StreamDeck plugin",
+        "payload": {
+          "action": "string - The action identifier",
+          "parameters": "object - Action-specific parameters"
+        },
+        "example": {
+          "type": "customAction",
+          "action": "runDebugger",
+          "parameters": {
+            "configuration": "Launch Chrome"
+          }
+        }
+      }
+    ],
+    "fromVSCodeToStreamDeck": [
+      {
+        "type": "registerInstance",
+        "description": "Register a VSCode instance with the StreamDeck broker",
+        "payload": {
+          "instanceId": "string - Unique identifier for this VSCode instance",
+          "workspaceName": "string - Name of the current workspace",
+          "workspacePath": "string - Path to the current workspace",
+          "capabilities": "array - List of supported capabilities"
+        },
+        "example": {
+          "type": "registerInstance",
+          "instanceId": "vscode-1651234567890",
+          "workspaceName": "My Project",
+          "workspacePath": "C:\\Projects\\MyProject",
+          "capabilities": ["windsurf-chat", "direct-input"]
+        }
+      },
+      {
+        "type": "instanceStatus",
+        "description": "Update the status of a VSCode instance",
+        "payload": {
+          "instanceId": "string - Unique identifier for this VSCode instance",
+          "status": "string - Current status (active, idle, etc.)",
+          "activeDocument": "string - Optional path to the active document"
+        },
+        "example": {
+          "type": "instanceStatus",
+          "instanceId": "vscode-1651234567890",
+          "status": "active",
+          "activeDocument": "C:\\Projects\\MyProject\\src\\main.js"
+        }
+      },
+      {
+        "type": "buttonsList",
+        "description": "List of available buttons in the VSCode extension",
+        "payload": {
+          "buttons": "array - List of button objects",
+          "categories": "array - Optional list of categories"
+        },
+        "example": {
+          "type": "buttonsList",
+          "buttons": [
+            {
+              "id": "continue",
+              "label": "Continue",
+              "message": "Please continue.",
+              "color": "#4CAF50",
+              "category": "quick-responses"
+            }
+          ],
+          "categories": [
+            "quick-responses",
+            "code-snippets"
+          ]
+        }
+      },
+      {
+        "type": "commandResult",
+        "description": "Result of executing a command",
+        "payload": {
+          "command": "string - The command that was executed",
+          "success": "boolean - Whether the command was successful",
+          "result": "any - Optional result data"
+        },
+        "example": {
+          "type": "commandResult",
+          "command": "editor.action.commentLine",
+          "success": true
+        }
+      },
+      {
+        "type": "pong",
+        "description": "Response to a ping message",
+        "payload": {
+          "id": "string - The ID from the ping message",
+          "timestamp": "number - Current timestamp"
+        },
+        "example": {
+          "type": "pong",
+          "id": "connection-check-1",
+          "timestamp": 1651234567890
+        }
+      },
+      {
+        "type": "error",
+        "description": "Error response",
+        "payload": {
+          "code": "string - Error code",
+          "message": "string - Error message",
+          "originalRequest": "object - The request that caused the error"
+        },
+        "example": {
+          "type": "error",
+          "code": "INVALID_REQUEST",
+          "message": "Invalid request format",
+          "originalRequest": {
+            "type": "unknown"
+          }
+        }
+      },
+      {
+        "type": "customEvent",
+        "description": "Custom event from VSCode to StreamDeck",
+        "payload": {
+          "event": "string - The event identifier",
+          "data": "any - Event-specific data"
+        },
+        "example": {
+          "type": "customEvent",
+          "event": "debuggerStarted",
+          "data": {
+            "configuration": "Launch Chrome"
+          }
+        }
+      }
+    ]
+  },
+  "buttonFormat": {
+    "id": "string - Unique identifier for the button",
+    "label": "string - Display label for the button",
+    "message": "string - Message to send when the button is clicked",
+    "color": "string - CSS color code for the button",
+    "icon": "string - Optional icon identifier or URL",
+    "category": "string - Optional category for grouping buttons",
+    "command": "string - Optional VSCode command to execute instead of sending a message",
+    "commandArgs": "array - Optional arguments for the command"
+  },
+  "extensions": {
+    "future": [
+      {
+        "name": "buttonCategories",
+        "description": "Group buttons into categories",
+        "status": "implemented"
+      },
+      {
+        "name": "messageTemplates",
+        "description": "Support for message templates with placeholders",
+        "status": "planned"
+      },
+      {
+        "name": "messageHistory",
+        "description": "Track and recall recently sent messages",
+        "status": "planned"
+      },
+      {
+        "name": "customActions",
+        "description": "Support for custom actions defined by the StreamDeck plugin",
+        "status": "implemented"
+      },
+      {
+        "name": "eventSubscriptions",
+        "description": "Allow StreamDeck to subscribe to specific VSCode events",
+        "status": "planned"
+      },
+      {
+        "name": "instanceManagement",
+        "description": "Support for managing multiple VSCode instances",
+        "status": "implemented"
+      }
+    ]
+  },
+  "brokerArchitecture": {
+    "description": "The StreamDeck plugin acts as a centralized message broker for multiple VSCode instances",
+    "roles": {
+      "streamdeck": {
+        "description": "Acts as the central message broker",
+        "responsibilities": [
+          "Maintain registry of connected VSCode instances",
+          "Route messages to appropriate instances",
+          "Provide UI for instance selection",
+          "Track instance status and health"
+        ]
+      },
+      "vscode": {
+        "description": "Connects to the StreamDeck broker as a client",
+        "responsibilities": [
+          "Register with the broker on startup",
+          "Send periodic heartbeats/status updates",
+          "Process messages targeted to this instance"
+        ]
+      }
+    },
+    "instanceManagement": {
+      "instanceIdentification": {
+        "description": "Each VSCode instance is identified by a unique ID",
+        "idFormat": "vscode-{timestamp}-{random}"
+      },
+      "instanceSelection": {
+        "description": "The StreamDeck UI allows selecting which VSCode instance to target",
+        "options": [
+          "Select default instance for all messages",
+          "Target specific instance for individual messages",
+          "Broadcast to all instances"
+        ]
+      },
+      "instanceTracking": {
+        "description": "The broker tracks the status of all connected instances",
+        "statusTypes": [
+          "active - Instance is currently in use",
+          "idle - Instance is open but not in active use",
+          "disconnected - Instance has disconnected"
+        ]
+      }
+    }
+  }
+}

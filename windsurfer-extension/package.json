@@ -1,0 +1,107 @@
+{
+  "name": "windsurfer",
+  "displayName": "Windsurfer",
+  "description": "Quick communication buttons for VSCode",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:windsurfer.showPanel",
+    "onCommand:windsurfer.addButton",
+    "onCommand:windsurfer.deleteButton"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "windsurfer.showPanel",
+        "title": "Windsurfer: Show Quick Communication Panel"
+      },
+      {
+        "command": "windsurfer.addButton",
+        "title": "Windsurfer: Add New Button"
+      },
+      {
+        "command": "windsurfer.deleteButton",
+        "title": "Windsurfer: Delete Button"
+      },
+      {
+        "command": "windsurfer.restartServers",
+        "title": "Windsurfer: Restart Communication Servers"
+      }
+    ],
+    "configuration": {
+      "title": "Windsurfer",
+      "properties": {
+        "windsurfer.buttonsFilePath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the JSON file storing button configurations"
+        },
+        "windsurfer.refreshInterval": {
+          "type": "number",
+          "default": 5000,
+          "description": "Interval (in ms) to refresh buttons from the configuration file"
+        },
+        "windsurfer.websocketPort": {
+          "type": "number",
+          "default": 8765,
+          "description": "Port for the WebSocket server to listen on"
+        },
+        "windsurfer.namedPipeName": {
+          "type": "string",
+          "default": "windsurfer-communication",
+          "description": "Name of the Named Pipe for communication (Windows only)"
+        },
+        "windsurfer.unixSocketPath": {
+          "type": "string",
+          "default": "/tmp/windsurfer-communication.sock",
+          "description": "Path to the Unix Domain Socket for communication (macOS/Linux only)"
+        },
+        "windsurfer.discoveryEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable service discovery to help StreamDeck find the extension"
+        },
+        "windsurfer.discoveryPort": {
+          "type": "number",
+          "default": 8766,
+          "description": "Port for the discovery service"
+        },
+        "windsurfer.discoveryInterval": {
+          "type": "number",
+          "default": 10000,
+          "description": "Interval (in ms) for broadcasting discovery announcements"
+        },
+        "windsurfer.inputMethod": {
+          "type": "string",
+          "enum": ["cursor", "windsurf", "direct"],
+          "default": "cursor",
+          "description": "Method to use for inserting text (cursor = at cursor position, windsurf = in Windsurf chat, direct = directly to Windsurf DOM element)"
+        },
+        "windsurfer.windsurfScriptPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the PowerShell script for sending messages to Windsurf chat"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.60.0",
+    "@types/ws": "^8.5.10",
+    "eslint": "^8.47.0"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}

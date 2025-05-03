@@ -1,0 +1,3 @@
+<terminalRules>
+- We are using Powershell so only use powershell commands.
+</terminalRules>
