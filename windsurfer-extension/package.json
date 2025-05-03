@@ -2,7 +2,15 @@
   "name": "windsurfer",
   "displayName": "Windsurfer",
   "description": "Quick communication buttons for VSCode",
-  "version": "0.1.0",
+  "version": "0.0.13",
+  "publisher": "maiks1986",
+  "author": {
+    "name": "Maiks1986"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maiks1986/Windsurfer-Extension.git"
+  },
   "engines": {
     "vscode": "^1.60.0"
   },
@@ -12,7 +20,8 @@
   "activationEvents": [
     "onCommand:windsurfer.showPanel",
     "onCommand:windsurfer.addButton",
-    "onCommand:windsurfer.deleteButton"
+    "onCommand:windsurfer.deleteButton",
+    "onCommand:windsurfer.openButtonsPanel"
   ],
   "main": "./extension.js",
   "contributes": {
@@ -32,6 +41,10 @@
       {
         "command": "windsurfer.restartServers",
         "title": "Windsurfer: Restart Communication Servers"
+      },
+      {
+        "command": "windsurfer.openButtonsPanel",
+        "title": "Windsurfer: Open Buttons Panel"
       }
     ],
     "configuration": {
@@ -94,7 +107,8 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "node ./test/runTest.js"
+    "test": "node ./test/runTest.js",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/vscode": "^1.60.0",

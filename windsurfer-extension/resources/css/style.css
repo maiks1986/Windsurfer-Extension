@@ -1,0 +1,104 @@
+body {
+  font-family: var(--vscode-font-family);
+  padding: 20px;
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-editor-background);
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--vscode-panel-border);
+  padding-bottom: 10px;
+}
+
+h2 {
+  font-size: 18px;
+  margin: 15px 0;
+}
+
+.button-container, .form-container {
+  margin-bottom: 30px;
+}
+
+.button-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.button-item {
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--vscode-editor-background);
+}
+
+.button-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.button-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.button-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.button-details p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--vscode-input-border);
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border-radius: 2px;
+}
+
+textarea {
+  min-height: 80px;
+  font-family: var(--vscode-editor-font-family);
+}
+
+button {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+button:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+.edit-button, .delete-button {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.delete-button {
+  background-color: var(--vscode-errorForeground);
+}
